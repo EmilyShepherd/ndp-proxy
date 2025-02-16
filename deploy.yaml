@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/name: ndp-proxy
+  name: ndp-proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: ndp-proxy
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: ndp-proxy
+    spec:
+      hostNetwork: true
+      tolerations:
+      - operator: Exists
+      nodeSelector:
+        example.net/label: required-value
+      containers:
+      - image: docker.io/emilyls/ndp-proxy:latest
+        name: ndp-proxy
+        args:
+        - "--network=2001:db8::"
+        - "--netmask=32"
+        - "--verbose"
+        resources:
+          requests:
+            cpu: 1m
+            memory: 1M
+        securityContext:
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
+            add:
+            # Required to send out raw network packets (not TCP/UDP)
+            - NET_RAW
+            # Required to determine the source mac and set it to
+            # promiscuous mode.
+            - NET_ADMIN
