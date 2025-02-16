@@ -31,3 +31,11 @@ An init script can also be installed with :
 Options can then be set in `/etc/sysconfig/ndp-proxy` or `/etc/default/ndp-proxy` like this :
 
     OPTIONS="-i eth0 -n ::1 -d"
+
+A container can also be built with:
+
+    podman build .
+
+Or, if using docker:
+
+    docker build -f Containerfile .
